@@ -59,6 +59,20 @@ db.createUser(
 )
 
 ```
+### 查询性能
+```
+db.testing.find({name: 123}).explain()
+```
+
+###刷新配置 
+```
+db.runCommand("flushRouterConfig");
+```
+
+### 更新mongo field value use other field value
+```
+db.purchaseitems.find({}).snapshot().forEach(function(ele){db.purchaseitems.update({_id:ele._id},{$set:{qingting_icon:ele.fee*10}})});
+```
 
 ## relpset 集群配置相关
 ####relpset 设置
@@ -93,4 +107,12 @@ security:
 replication:
   replSetName: qtpay
 
+```
+### 更新repl set集群配置信息
+```
+cfg = rs.conf()
+cfg.members[0].host = "xxxhost: 20000"
+cfg.members[1].host = "yyyhost: 20001"
+cfg.members[2].host = "zzzhost: 20002"
+rs.reconfig(cfg)
 ```
