@@ -175,3 +175,17 @@ sysctl -p
 `cat /proc/sys/net/ipv4/tcp_fin_timeout`
 
 [参考](http://blog.csdn.net/huangxy10/article/details/8012180)
+
+####15.查看当前系统运行等级
+`runlevel`
+```
+0: 关机
+1: 单用户（维护）
+2~5: 多用户
+6: 重启
+```
+
+自动生成启动链接:
+```
+sysv-rc-conf nginx on
+```

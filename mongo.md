@@ -16,6 +16,7 @@ db.mail_addr.drop()                      #删除collection
 db.dropDatabase()                        #删除当前的数据库
 db.foo.remove({'yy':5})                  #删除yy=5的记录 
 db.foo.remove()                          #删除所有的记录
+db.serverStatus().connections				 #查看当前连接数
 
 #存储嵌套的对象
 db.foo.save({'name':'ysz','address':{'city':'beijing','post':100096},'phone':[138,139]})
@@ -58,6 +59,14 @@ db.createUser(
  }
 )
 
+### 用户授权
+db.grantRolesToUser(
+    "user",
+    [
+      { role: "read", db: "dbname" }
+    ]
+)
+
 ```
 ### 查询性能
 ```
@@ -75,17 +84,21 @@ db.purchaseitems.find({}).snapshot().forEach(function(ele){db.purchaseitems.upda
 ```
 
 ## relpset 集群配置相关
-####relpset 设置
+#### relpset 设置
 ```
 rs.initiate({ _id:qtime, members:[ {_id:0,host:'',priority:2}, {_id:1,host:'',priority:1},{_id:2,host:'',priority:1}] })
 ```
-####relpset 查看
+#### relpset 查看
 ```rs.status()```
 
-####relpset 结点增加
-``` rs.add("host:port") ```
+#### relpset 节点增加
+```
+rs.add({_id: 1, host: "mongodb3.example.net:27017", priority: 0, hidden: true}) 
+```
+#### relpset 节点删除
+``` rs.remove("host:port"); ```
 
-####relpset config file
+#### relpset config file
 ```
 storage:
   dbPath: /mnt/mongodb/data
@@ -108,11 +121,41 @@ replication:
   replSetName: qtpay
 
 ```
-### 更新repl set集群配置信息
+#### 生成 keyfile文件
+
+```
+openssl rand -base64 666 > /opt/mongo/conf/MongoReplSet_KeyFile
+chown mongod.mongod /opt/mongo/conf/MongoReplSet_KeyFile
+chmod 600 /opt/mongo/conf/MongoReplSet_KeyFile
+```
+
+#### 更新repl set集群配置信息
 ```
 cfg = rs.conf()
 cfg.members[0].host = "xxxhost: 20000"
 cfg.members[1].host = "yyyhost: 20001"
 cfg.members[2].host = "zzzhost: 20002"
 rs.reconfig(cfg)
+```
+
+#### mongodb3.0 建议开启的设置
+```
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+执行上面两命令后只是当前起作用。如果重启mongod服务后 就失效。永久起效则
+写入到 /etc/rc.local
+```
+ 
+
+#### 主节点降为secondary
+```
+mongo>use admin
+mongo>rs.stepDown(60)#单位为 秒
+```
+ 
+#### 锁定指定节点在指定时间内不能成为主节点（阻止选举）
+```
+mongo>rs.freeze(120)#单位为 秒
+释放阻止
+mongo>rs.freeze(0)
 ```
