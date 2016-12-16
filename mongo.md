@@ -6,7 +6,9 @@ use test
 db                                       #查看当前连接在哪个数据库
 show collections                         #查看所有的collection 
 db.help()                                #当前数据库支持哪些方法
-db.user.help()                           #当前数据库下的表或者表collection支持的方法
+db.user.help()                           #当前数据库下的表或者表
+db.stats()									 #当前数据库的数据大小
+collection支持的方法
  
 db.foo.find()                            #查找所有
 db.foo.findOne()                         #查找一条记录
@@ -38,6 +40,19 @@ mongodump --host= --port= -u -p -d qtime -c -o ./
 
 #导出 csv
 mongoexport --host= --port= -u -p -d -c -o ./***.csv
+/usr/bin/mongoexport -h  --port= -u -p -d -c -q  -f  -o  --type=csv
+
+-h  arg     主机
+--port arg  端口
+-u  arg     用户名
+-p  arg     密码
+-d  arg     数据库
+-c  arg     集合
+-f  arg     字段名 逗号隔开
+-q  arg     查询条件 json格式
+--csv       导出csv格式
+-o  arg     导出的文件名
+
 
 #用户权限  (可先设置超级用户，其他再有超级用户设置即可)
 db.createUser(
