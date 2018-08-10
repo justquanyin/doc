@@ -42,6 +42,9 @@ mongodump --host= --port= -u -p -d qtime -c -o ./
 mongoexport --host= --port= -u -p -d -c -o ./***.csv
 /usr/bin/mongoexport -h  --port= -u -p -d -c -q  -f  -o  --type=csv
 
+# aggregate 
+db.mutation.aggregate([{$match:{ name: 'generateURLMutation', 'args.id': "1e00ce33f498069d"}},{$group:{_id:"$operator"}},{ $group : { _id : "$_id.operator", number : { $sum : 1 } } }]);
+
 -h  arg     主机
 --port arg  端口
 -u  arg     用户名
